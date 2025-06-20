@@ -3,64 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hangman Game</title>
+    <title>Hangman Game Collection</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            padding: 20px;
         }
         
-        .game-container {
+        .main-container {
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), 0 0 10px #fff; }
+            to { text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), 0 0 20px #fff, 0 0 30px #fff; }
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .game-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .game-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 30px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
         }
         
-        h1 {
+        .game-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-card.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        
+        .game-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .game-card p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+        
+        .game-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hangman-display {
             text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+            font-size: 1.4em;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            white-space: pre-line;
+            min-height: 180px;
         }
         
         .word-display {
-            font-size: 2em;
+            font-size: 2.5em;
             text-align: center;
             margin: 30px 0;
-            letter-spacing: 10px;
+            letter-spacing: 15px;
             font-family: 'Courier New', monospace;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
             border-radius: 10px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .game-info {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             margin: 20px 0;
-            font-size: 1.2em;
+            font-size: 1.1em;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .info-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
         }
         
         .alphabet {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
             gap: 10px;
             margin: 30px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .letter-btn {
-            padding: 15px;
+            padding: 12px;
             font-size: 1.2em;
-            border: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -68,89 +171,254 @@
         }
         
         .letter-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.5);
         }
         
         .letter-btn:disabled {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             cursor: not-allowed;
-            opacity: 0.5;
+            opacity: 0.4;
             transform: none;
+        }
+        
+        .letter-btn.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+        
+        .letter-btn.wrong {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
         }
         
         .message {
             text-align: center;
-            font-size: 1.3em;
+            font-size: 1.4em;
             margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .new-game-btn {
-            display: block;
-            margin: 30px auto;
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
             padding: 15px 30px;
-            font-size: 1.2em;
-            background: #ff6b6b;
-            color: white;
+            font-size: 1.1em;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .new-game-btn {
+            background: #4CAF50;
+            color: white;
         }
         
         .new-game-btn:hover {
-            background: #ff5252;
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
         
-        .hangman-display {
-            text-align: center;
-            font-family: 'Courier New', monospace;
-            font-size: 1.5em;
+        .back-btn {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .back-btn:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
             margin: 20px 0;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            white-space: pre-line;
+            flex-wrap: wrap;
+        }
+        
+        .difficulty-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .difficulty-btn.active {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+        
+        .difficulty-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .star-wars-theme {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+        }
+        
+        .star-wars-theme .game-card.active {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        @media (max-width: 600px) {
+            .title {
+                font-size: 2em;
+            }
+            
+            .word-display {
+                font-size: 1.8em;
+                letter-spacing: 10px;
+            }
+            
+            .alphabet {
+                grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+                gap: 5px;
+            }
+            
+            .letter-btn {
+                padding: 8px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>🎯 Hangman Game</h1>
+    <div class="main-container">
+        <h1 class="title">🎮 Ultimate Hangman</h1>
+        <p class="subtitle">Choose your adventure!</p>
         
-        <div class="hangman-display" id="hangmanDisplay"></div>
-        
-        <div class="word-display" id="wordDisplay"></div>
-        
-        <div class="game-info">
-            <div>Guesses left: <span id="guessesLeft">8</span></div>
-            <div>Letters guessed: <span id="lettersGuessed">None</span></div>
+        <div class="game-selector" id="gameSelector">
+            <div class="game-card" onclick="selectGame('classic')">
+                <h3>🎯 Classic Hangman</h3>
+                <p>The traditional word-guessing game with computer and programming terms</p>
+            </div>
+            <div class="game-card" onclick="selectGame('starwars')">
+                <h3>⭐ Star Wars Edition</h3>
+                <p>Test your knowledge of the galaxy far, far away!</p>
+            </div>
+            <div class="game-card" onclick="selectGame('custom')">
+                <h3>🎨 Custom Words</h3>
+                <p>Create your own word list and challenge friends!</p>
+            </div>
         </div>
         
-        <div class="alphabet" id="alphabet"></div>
-        
-        <div class="message" id="message">Guess a letter to start!</div>
-        
-        <button class="new-game-btn" onclick="startNewGame()">New Game</button>
+        <div class="game-container" id="gameContainer">
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <div>Games Played</div>
+                    <div class="stat-value" id="gamesPlayed">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>Wins</div>
+                    <div class="stat-value" id="wins">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>Win Rate</div>
+                    <div class="stat-value" id="winRate">0%</div>
+                </div>
+            </div>
+            
+            <div class="difficulty-selector" id="difficultySelector">
+                <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy (10 guesses)</button>
+                <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium (8 guesses)</button>
+                <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard (6 guesses)</button>
+            </div>
+            
+            <div class="hangman-display" id="hangmanDisplay"></div>
+            
+            <div class="word-display" id="wordDisplay"></div>
+            
+            <div class="game-info">
+                <div class="info-item">Category: <span id="category">General</span></div>
+                <div class="info-item">Guesses left: <span id="guessesLeft">10</span></div>
+                <div class="info-item">Score: <span id="score">0</span></div>
+            </div>
+            
+            <div class="message" id="message">Choose a letter to begin!</div>
+            
+            <div class="alphabet" id="alphabet"></div>
+            
+            <div class="control-buttons">
+                <button class="btn new-game-btn" onclick="startNewGame()">New Game</button>
+                <button class="btn back-btn" onclick="backToMenu()">Back to Menu</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Word list - using a subset for demo purposes
-        const words = [
-            'javascript', 'python', 'computer', 'hangman', 'programming', 'developer',
-            'coding', 'software', 'algorithm', 'function', 'variable', 'boolean',
-            'string', 'number', 'array', 'object', 'method', 'class', 'inheritance',
-            'polymorphism', 'debugging', 'testing', 'deployment', 'framework',
-            'library', 'database', 'server', 'client', 'frontend', 'backend'
-        ];
+        // Word lists for different themes
+        const wordLists = {
+            classic: {
+                easy: ['code', 'data', 'file', 'user', 'test', 'game', 'web', 'app', 'bug', 'loop'],
+                medium: ['javascript', 'python', 'function', 'variable', 'database', 'algorithm', 'computer', 'software', 'network', 'security'],
+                hard: ['polymorphism', 'encapsulation', 'asynchronous', 'authentication', 'optimization', 'virtualization', 'cryptocurrency', 'microservices', 'containerization', 'infrastructure']
+            },
+            starwars: {
+                easy: ['jedi', 'sith', 'luke', 'leia', 'yoda', 'force', 'saber', 'droid', 'rebel', 'empire'],
+                medium: ['skywalker', 'chewbacca', 'lightsaber', 'millennium', 'tatooine', 'endor', 'dagobah', 'coruscant', 'mandalorian', 'palpatine'],
+                hard: ['midichlorians', 'padawan', 'youngling', 'dooku', 'grievous', 'kamino', 'geonosis', 'mustafar', 'scarif', 'exegol']
+            },
+            custom: {
+                easy: ['custom1', 'custom2'],
+                medium: ['customword1', 'customword2'],
+                hard: ['customdifficultword1', 'customdifficultword2']
+            }
+        };
         
+        let currentGame = null;
         let currentWord = '';
         let guessedLetters = [];
         let wrongGuesses = 0;
-        const maxWrongGuesses = 8;
+        let maxWrongGuesses = 10;
+        let score = 0;
+        let difficulty = 'easy';
+        let gameStats = {
+            gamesPlayed: 0,
+            wins: 0
+        };
         
         const hangmanParts = [
             '',
@@ -161,17 +429,103 @@
             '  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========',
             '  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========',
             '  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========',
-            '  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========='
+            '  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========',
+            '  +---+\n  |   |\n  X   |\n /|\\  |\n / \\  |\nGAME OVER|\n=========',
+            '  +---+\n  |   |\n  ☠   |\n /|\\  |\n / \\  |\nGAME OVER|\n========='
         ];
         
+        // Load stats from localStorage
+        function loadStats() {
+            const saved = localStorage.getItem('hangmanStats');
+            if (saved) {
+                gameStats = JSON.parse(saved);
+                updateStatsDisplay();
+            }
+        }
+        
+        function saveStats() {
+            localStorage.setItem('hangmanStats', JSON.stringify(gameStats));
+            updateStatsDisplay();
+        }
+        
+        function updateStatsDisplay() {
+            document.getElementById('gamesPlayed').textContent = gameStats.gamesPlayed;
+            document.getElementById('wins').textContent = gameStats.wins;
+            const winRate = gameStats.gamesPlayed > 0 ? Math.round((gameStats.wins / gameStats.gamesPlayed) * 100) : 0;
+            document.getElementById('winRate').textContent = winRate + '%';
+        }
+        
+        function selectGame(gameType) {
+            currentGame = gameType;
+            document.querySelectorAll('.game-card').forEach(card => card.classList.remove('active'));
+            event.target.closest('.game-card').classList.add('active');
+            
+            document.getElementById('gameSelector').style.display = 'none';
+            document.getElementById('gameContainer').classList.add('active');
+            
+            if (gameType === 'starwars') {
+                document.body.classList.add('star-wars-theme');
+                document.getElementById('category').textContent = 'Star Wars';
+            } else {
+                document.body.classList.remove('star-wars-theme');
+                document.getElementById('category').textContent = gameType === 'classic' ? 'Programming' : 'Custom';
+            }
+            
+            if (gameType === 'custom') {
+                promptCustomWords();
+            } else {
+                startNewGame();
+            }
+        }
+        
+        function promptCustomWords() {
+            const customWords = prompt('Enter your custom words separated by commas:');
+            if (customWords) {
+                const words = customWords.split(',').map(w => w.trim().toLowerCase()).filter(w => w.length > 0);
+                if (words.length > 0) {
+                    wordLists.custom.easy = words.filter(w => w.length <= 5);
+                    wordLists.custom.medium = words.filter(w => w.length > 5 && w.length <= 8);
+                    wordLists.custom.hard = words.filter(w => w.length > 8);
+                    
+                    if (wordLists.custom.easy.length === 0) wordLists.custom.easy = words;
+                    if (wordLists.custom.medium.length === 0) wordLists.custom.medium = words;
+                    if (wordLists.custom.hard.length === 0) wordLists.custom.hard = words;
+                    
+                    startNewGame();
+                } else {
+                    alert('Please enter at least one word!');
+                    backToMenu();
+                }
+            } else {
+                backToMenu();
+            }
+        }
+        
+        function setDifficulty(level) {
+            difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            switch(level) {
+                case 'easy': maxWrongGuesses = 10; break;
+                case 'medium': maxWrongGuesses = 8; break;
+                case 'hard': maxWrongGuesses = 6; break;
+            }
+            
+            startNewGame();
+        }
+        
         function startNewGame() {
-            currentWord = words[Math.floor(Math.random() * words.length)].toLowerCase();
+            if (!currentGame) return;
+            
+            const wordList = wordLists[currentGame][difficulty];
+            currentWord = wordList[Math.floor(Math.random() * wordList.length)].toLowerCase();
             guessedLetters = [];
             wrongGuesses = 0;
             
             updateDisplay();
             createAlphabet();
-            document.getElementById('message').textContent = 'Guess a letter to start!';
+            document.getElementById('message').textContent = 'Choose a letter to begin!';
         }
         
         function createAlphabet() {
@@ -193,13 +547,18 @@
             if (guessedLetters.includes(letter)) return;
             
             guessedLetters.push(letter);
-            document.getElementById(`btn-${letter}`).disabled = true;
+            const button = document.getElementById(`btn-${letter}`);
+            button.disabled = true;
             
             if (currentWord.includes(letter)) {
-                document.getElementById('message').textContent = `Good guess! "${letter.toUpperCase()}" is in the word.`;
+                button.classList.add('correct');
+                const count = currentWord.split('').filter(l => l === letter).length;
+                score += 10 * count;
+                document.getElementById('message').textContent = `Great! "${letter.toUpperCase()}" appears ${count} time${count > 1 ? 's' : ''}!`;
             } else {
+                button.classList.add('wrong');
                 wrongGuesses++;
-                document.getElementById('message').textContent = `Sorry, "${letter.toUpperCase()}" is not in the word.`;
+                document.getElementById('message').textContent = `Oops! "${letter.toUpperCase()}" is not in the word.`;
             }
             
             updateDisplay();
@@ -220,21 +579,29 @@
             
             // Update game info
             document.getElementById('guessesLeft').textContent = maxWrongGuesses - wrongGuesses;
-            document.getElementById('lettersGuessed').textContent = 
-                guessedLetters.length > 0 ? guessedLetters.map(l => l.toUpperCase()).join(', ') : 'None';
+            document.getElementById('score').textContent = score;
             
             // Update hangman display
-            document.getElementById('hangmanDisplay').textContent = hangmanParts[wrongGuesses];
+            const partIndex = Math.floor((wrongGuesses / maxWrongGuesses) * (hangmanParts.length - 1));
+            document.getElementById('hangmanDisplay').textContent = hangmanParts[Math.min(partIndex, hangmanParts.length - 1)];
         }
         
         function checkGameEnd() {
             const wordGuessed = currentWord.split('').every(letter => guessedLetters.includes(letter));
             
             if (wordGuessed) {
-                document.getElementById('message').textContent = '🎉 Congratulations! You won!';
+                score += 50 + (maxWrongGuesses - wrongGuesses) * 10;
+                document.getElementById('score').textContent = score;
+                document.getElementById('message').textContent = `🎉 Incredible! You won with ${maxWrongGuesses - wrongGuesses} guesses left! +${50 + (maxWrongGuesses - wrongGuesses) * 10} bonus points!`;
+                gameStats.wins++;
+                gameStats.gamesPlayed++;
+                saveStats();
                 disableAllButtons();
             } else if (wrongGuesses >= maxWrongGuesses) {
                 document.getElementById('message').textContent = `💀 Game Over! The word was "${currentWord.toUpperCase()}".`;
+                document.getElementById('hangmanDisplay').textContent = hangmanParts[hangmanParts.length - 1];
+                gameStats.gamesPlayed++;
+                saveStats();
                 disableAllButtons();
             }
         }
@@ -244,8 +611,16 @@
             buttons.forEach(button => button.disabled = true);
         }
         
-        // Start the game when page loads
-        startNewGame();
+        function backToMenu() {
+            currentGame = null;
+            score = 0;
+            document.getElementById('gameContainer').classList.remove('active');
+            document.getElementById('gameSelector').style.display = 'grid';
+            document.body.classList.remove('star-wars-theme');
+        }
+        
+        // Load stats when page loads
+        loadStats();
     </script>
 </body>
 </html>
